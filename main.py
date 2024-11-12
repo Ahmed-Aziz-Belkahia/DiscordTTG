@@ -160,10 +160,11 @@ async def on_message(message):
         return
 
     # Check if the message author is in the list of authorized user IDs
-    if message.author.id in authorized_user_ids:
         
-        # Make sure the message is from the correct channel
-        if message.channel.id == CHANNEL_ID:
+    # Make sure the message is from the correct channel
+    if message.channel.id == CHANNEL_ID:
+        if message.author.id in authorized_user_ids:
+
             # Check if the message contains exactly one image attachment
             if len(message.attachments) == 1:
                 attachment = message.attachments[0]
@@ -171,30 +172,23 @@ async def on_message(message):
                 if attachment.content_type and attachment.content_type.startswith('image/'):
                     image_url = attachment.url  # Save the image URL
                     print(f"Image URL: {image_url}")
-
                     # Create a button that opens the modal
                     button = Button(label="Fill out the form", style=discord.ButtonStyle.primary)
-
                     # Define a callback function for the button
                     async def button_callback(interaction: discord.Interaction):
                         # Create and send the modal
                         modal = FormModal(image_url, message)
                         await interaction.response.send_modal(modal)
-
                     # Add the callback to the button
                     button.callback = button_callback
-
                     # Create a view to hold the button
                     view = View()
                     view.add_item(button)
-
                     # Send the message with the button to the channel, visible to everyone
                     sent_message = await message.channel.send("Please fill out the form below:", view=view)
-
                     # Start the timer to delete the image after 60 seconds if the button isn't pressed
                     await asyncio.sleep(60)  # Wait for 60 seconds
                     await sent_message.delete()  # Delete the message if the button wasn't pressed
-
                 else:
                     print("No valid image attachment detected.")
                     await message.delete()  # Delete message if no valid image is detected
@@ -202,10 +196,12 @@ async def on_message(message):
                 print("No attachment found, deleting message.")
                 await message.delete()  # Delete message if no attachment is found
 
-    else:
-        # Send an ephemeral message to the user indicating they are not authorized
-        await message.channel.send(f"{message.author.mention}, you are not authorized to use this command.", delete_after=10)
-        await message.delete()
+                
+        else:
+            # Send an ephemeral message to the user indicating they are not authorized
+            await message.channel.send(f"{message.author.mention}, you are not authorized to use this command.", delete_after=10)
+            await message.delete()
+
         
     # Make sure the bot doesn't ignore its own messages
     await bot.process_commands(message)
