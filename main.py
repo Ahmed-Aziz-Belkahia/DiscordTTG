@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import requests
 
 # Define the URL
-url = "https://tunisiantopgs.com/add-member"
+url = "https://tunisiantopgs.com/add-member/"
 
 # Load environment variables
 load_dotenv()
@@ -118,12 +118,13 @@ class FormModal(Modal):
 
         # Send the POST request
         try:
-            response = requests.post(url, data=data)
+            response = requests.post(url, json=data)  # Use json=data to send as JSON
             # Check if the request was successful
             if response.status_code == 200:
                 print("Request was successful.")
                 print("Response:", response.json())  # or response.text if not JSON
             else:
+                print(f"Request failed with status code {response}")
                 print(f"Request failed with status code {response.status_code}")
         except requests.exceptions.RequestException as e:
             print(f"An error occurred: {e}")
@@ -218,4 +219,4 @@ async def on_reaction_add(reaction, user):
         print(f"✅ Reaction count: {check_reaction_count}")
 
 # Run the bot with the token from the environment variable
-bot.run(os.getenv("DISCORD_TOKEN"))
+bot.run("")
