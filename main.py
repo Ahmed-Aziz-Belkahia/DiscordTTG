@@ -111,14 +111,14 @@ class FormModal(Modal):
             embed.add_field(name="Image URL", value="No image provided", inline=False)
 
         data = {
-            "email": email,  # Replace with the actual email
+            "email": email.lower(),  # Replace with the actual email
             "image": image_url      # Replace with the actual author ID
         }
 
 
         # Send the POST request
         try:
-            response = requests.post(url, json=data)  # Use json=data to send as JSON
+            response = requests.post(url, json=data)  #Use json=data to send as JSON
             # Check if the request was successful
             if response.status_code == 200:
                 print("Request was successful.")
@@ -135,7 +135,7 @@ class FormModal(Modal):
         await interaction.response.send_message(embed=embed, ephemeral=False)
 
         # Wait for 60 seconds after the submission and then delete the original message
-        await asyncio.sleep(60)  # Wait for 60 seconds
+        await asyncio.sleep(180)  # Wait for 60 seconds
         try:
             await self.original_message.delete()  # Delete the original message with the image
             print("Original message deleted after 60 seconds.")
@@ -188,7 +188,7 @@ async def on_message(message):
                     # Send the message with the button to the channel, visible to everyone
                     sent_message = await message.channel.send("Please fill out the form below:", view=view)
                     # Start the timer to delete the image after 60 seconds if the button isn't pressed
-                    await asyncio.sleep(60)  # Wait for 60 seconds
+                    await asyncio.sleep(180)  # Wait for 60 seconds
                     await sent_message.delete()  # Delete the message if the button wasn't pressed
                 else:
                     print("No valid image attachment detected.")
